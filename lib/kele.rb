@@ -21,4 +21,22 @@ class Kele
 		url = @base_url + "mentors/#{mentor_id}/student_availability"
 		JSON.parse(self.class.get(url, headers: {"authorization" => @auth_token}).body)
 	end
+
+  def get_messages(value = 0)
+		url = @base_url + "message_threads"
+		if value > 0
+			JSON.parse(self.class.get(url, values: {page: value}, headers: {"authorization" => @auth_token}).body)
+		else
+			JSON.parse(self.class.get(url, headers: {"authorization" => @auth_token}).body)
+		end
+	end
+
+  def create_message(sender, recipient_id, subject, stripped_text, token_id = nil)
+    url = @base_url + "messages"
+    if token_id != nil
+      self.class.post(url, body: {sender: sender, recipient_id: recipient_id, subject: subject, "stripped-text": stripped_text, token: token_id}, headers: { "authorization" => @auth_token })
+    else
+      self.class.post(url, body: {sender: sender, recipient_id: recipient_id, subject: subject, "stripped-text": stripped_text}, headers: { "authorization" => @auth_token })
+    end
+  end
 end
